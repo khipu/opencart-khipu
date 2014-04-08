@@ -25,3 +25,6 @@ las opciones de tu cuenta de cobro en el portal de khipu.
 El sitio oficial de esta extensión es su [página en github.com](https://github.com/khipu/opencart-khipu). Si deseas 
 informar de errores, revisar el código fuente o ayudarnos a mejorarla puedes usar el sistema de tickets y pull-requests. Toda ayuda es bienvenida.
 
+## licencia GPL
+
+Este plugin se distribuye bajo los términos de la licencia GPL versión 3. Puedes leer el archivo license.txt con los detalles de la licencia.
