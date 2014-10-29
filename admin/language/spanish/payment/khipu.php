@@ -3,6 +3,7 @@
 $_['heading_title']					 = 'Transferencia simplificada (khipu)';
 
 // Text
+$_['text_edit']                     = 'Editar khipu - transferencia simplificada';
 $_['text_payment']					 = 'Payment';
 $_['text_success']					 = 'Success: You have modified khipu details!';
 $_['text_khipu']				 = '<a onclick="window.open(\'https://khipu.com\');"><img src="view/image/payment/khipu.png" alt="khipu" title="khipu" style="border: 1px solid #EEEEEE;" /></a>';

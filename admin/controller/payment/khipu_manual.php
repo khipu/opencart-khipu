@@ -12,125 +12,132 @@ class ControllerPaymentKhipuManual extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('khipu_manual', $this->request->post);
 			$this->session->data['success'] = $this->language->get('text_success');
-			$this->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
+            $this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
-		$this->data['heading_title'] = $this->language->get('heading_title');
+        $data['text_edit'] = $this->language->get('text_edit');
 
-		$this->data['text_all_zones'] = $this->language->get('text_all_zones');
-		$this->data['text_enabled'] = $this->language->get('text_enabled');
-		$this->data['text_disabled'] = $this->language->get('text_disabled');
+		$data['heading_title'] = $this->language->get('heading_title');
 
-		$this->data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
-		$this->data['entry_status'] = $this->language->get('entry_status');
-		$this->data['entry_sort_order'] = $this->language->get('entry_sort_order');
+		$data['text_all_zones'] = $this->language->get('text_all_zones');
+		$data['text_enabled'] = $this->language->get('text_enabled');
+		$data['text_disabled'] = $this->language->get('text_disabled');
+
+		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
+		$data['entry_status'] = $this->language->get('entry_status');
+		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
 	
 
-		$this->data['entry_receiverid'] = $this->language->get('entry_receiverid');
-		$this->data['entry_secret'] = $this->language->get('entry_secret');
-		$this->data['entry_completed_status'] = $this->language->get('entry_completed_status');
+		$data['entry_receiverid'] = $this->language->get('entry_receiverid');
+		$data['entry_secret'] = $this->language->get('entry_secret');
+		$data['entry_completed_status'] = $this->language->get('entry_completed_status');
 
 
-		$this->data['button_save'] = $this->language->get('button_save');
-		$this->data['button_cancel'] = $this->language->get('button_cancel');
+		$data['button_save'] = $this->language->get('button_save');
+		$data['button_cancel'] = $this->language->get('button_cancel');
 
  		if (isset($this->error['warning'])) {
-			$this->data['error_warning'] = $this->error['warning'];
+			$data['error_warning'] = $this->error['warning'];
 		} else {
-			$this->data['error_warning'] = '';
+			$data['error_warning'] = '';
 		}
 
+        if (isset($this->session->data['success'])) {
+            $data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $data['success'] = '';
+        }
+
  		if (isset($this->error['receiverid'])) {
-			$this->data['error_receiverid'] = $this->error['receiverid'];
+			$data['error_receiverid'] = $this->error['receiverid'];
 		} else {
-			$this->data['error_receiverid'] = '';
+			$data['error_receiverid'] = '';
 		}
 
                 if (isset($this->error['secret'])) {
-                        $this->data['error_secret'] = $this->error['secret'];
+                        $data['error_secret'] = $this->error['secret'];
                 } else {
-                        $this->data['error_secret'] = '';
+                        $data['error_secret'] = '';
                 }
 
                 if (isset($this->request->post['khipu_manual_completed_status_id'])) {
-                        $this->data['khipu_manual_completed_status_id'] = $this->request->post['khipu_manual_completed_status_id'];
+                        $data['khipu_manual_completed_status_id'] = $this->request->post['khipu_manual_completed_status_id'];
                 } else {
-                        $this->data['khipu_manual_completed_status_id'] = $this->config->get('khipu_manual_completed_status_id');
+                        $data['khipu_manual_completed_status_id'] = $this->config->get('khipu_manual_completed_status_id');
                 }
 
-		$this->data['breadcrumbs'] = array();
+		$data['breadcrumbs'] = array();
 
-   		$this->data['breadcrumbs'][] = array(
+   		$data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_home'),
 			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),      		
 			'separator' => false
    		);
 
-   		$this->data['breadcrumbs'][] = array(
+   		$data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_payment'),
 			'href'      => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
 			'separator' => ' :: '
    		);
 
-   		$this->data['breadcrumbs'][] = array(
+   		$data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('heading_title'),
 			'href'      => $this->url->link('payment/khipu_manual', 'token=' . $this->session->data['token'], 'SSL'),
 			'separator' => ' :: '
    		);
 
-		$this->data['action'] = $this->url->link('payment/khipu_manual', 'token=' . $this->session->data['token'], 'SSL');
+		$data['action'] = $this->url->link('payment/khipu_manual', 'token=' . $this->session->data['token'], 'SSL');
 
-		$this->data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+		$data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
 
 		if (isset($this->request->post['khipu_manual_receiverid'])) {
-			$this->data['khipu_manual_receiverid'] = $this->request->post['khipu_manual_receiverid'];
+			$data['khipu_manual_receiverid'] = $this->request->post['khipu_manual_receiverid'];
 		} else {
-			$this->data['khipu_manual_receiverid'] = $this->config->get('khipu_manual_receiverid');
+			$data['khipu_manual_receiverid'] = $this->config->get('khipu_manual_receiverid');
 		}
 
                 if (isset($this->request->post['khipu_manual_secret'])) {
-                        $this->data['khipu_manual_secret'] = $this->request->post['khipu_manual_secret'];
+                        $data['khipu_manual_secret'] = $this->request->post['khipu_manual_secret'];
                 } else {
-                        $this->data['khipu_manual_secret'] = $this->config->get('khipu_manual_secret');
+                        $data['khipu_manual_secret'] = $this->config->get('khipu_manual_secret');
                 }
 
 		$this->load->model('localisation/order_status');
 
-		$this->data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
 		if (isset($this->request->post['khipu_manual_geo_zone_id'])) {
-			$this->data['khipu_manual_geo_zone_id'] = $this->request->post['khipu_manual_geo_zone_id'];
+			$data['khipu_manual_geo_zone_id'] = $this->request->post['khipu_manual_geo_zone_id'];
 		} else {
-			$this->data['khipu_manual_geo_zone_id'] = $this->config->get('khipu_manual_geo_zone_id');
+			$data['khipu_manual_geo_zone_id'] = $this->config->get('khipu_manual_geo_zone_id');
 		}
 
 		$this->load->model('localisation/geo_zone');
 
-		$this->data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
+		$data['geo_zones'] = $this->model_localisation_geo_zone->getGeoZones();
 
 		if (isset($this->request->post['khipu_manual_status'])) {
-			$this->data['khipu_manual_status'] = $this->request->post['khipu_manual_status'];
+			$data['khipu_manual_status'] = $this->request->post['khipu_manual_status'];
 		} else {
-			$this->data['khipu_manual_status'] = $this->config->get('khipu_manual_status');
+			$data['khipu_manual_status'] = $this->config->get('khipu_manual_status');
 		}
 		
 		if (isset($this->request->post['khipu_manual_sort_order'])) {
-			$this->data['khipu_manual_sort_order'] = $this->request->post['khipu_manual_sort_order'];
+			$data['khipu_manual_sort_order'] = $this->request->post['khipu_manual_sort_order'];
 		} else {
-			$this->data['khipu_manual_sort_order'] = $this->config->get('khipu_manual_sort_order');
+			$data['khipu_manual_sort_order'] = $this->config->get('khipu_manual_sort_order');
 		}
 
-		$this->template = 'payment/khipu_manual.tpl';
-		$this->children = array(
-			'common/header',
-			'common/footer'
-		);
+        $data['header'] = $this->load->controller('common/header');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['column_left'] = $this->load->controller('common/column_left');
 
-		$this->response->setOutput($this->render());
+        $this->response->setOutput($this->load->view('payment/khipu_manual.tpl', $data));
 	}
 
 	private function validate() {
-		error_log('======> ' . $this->user->hasPermission('modify', 'payment/khipu_manual'));
 		if (!$this->user->hasPermission('modify', 'payment/khipu_manual')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

@@ -16,11 +16,11 @@ class ControllerPaymentKhipuManual extends Controller {
 			return;
 		}
 		$url = 'manual-url';
-		$this->redirect($response->$url);
+		$this->response->redirect($response->$url);
 	}
 
 
-	protected function index() {
+	public function index() {
 		$this->language->load('payment/khipu_manual');
 
 		$this->load->model('checkout/order');
@@ -28,8 +28,8 @@ class ControllerPaymentKhipuManual extends Controller {
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
 		if ($order_info) {
-			$this->data['receiver_id'] = $this->config->get('khipu_manual_receiverid');
-			$this->data['subject'] = html_entity_decode($this->config->get('config_name') . ' Order #' . $this->session->data['order_id'], ENT_QUOTES, 'UTF-8');
+			$data['receiver_id'] = $this->config->get('khipu_manual_receiverid');
+			$data['subject'] = html_entity_decode($this->config->get('config_name') . ' Order #' . $this->session->data['order_id'], ENT_QUOTES, 'UTF-8');
 
 			$body = '';
 			foreach ($this->cart->getProducts() as $product) {
@@ -38,19 +38,19 @@ class ControllerPaymentKhipuManual extends Controller {
 
 			$total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
 
-			$this->data['amount'] = $total;
-			$this->data['body'] = $body;
-			$this->data['payer_email'] = $order_info['email'];
-			$this->data['transaction_id'] = $this->session->data['order_id'] . ' - ' . html_entity_decode($order_info['payment_firstname'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['payment_lastname'], ENT_QUOTES, 'UTF-8');
-			$this->data['return_url'] = $this->url->link('checkout/success');
-			$this->data['notify_url'] = $this->url->link('payment/khipu_manual/callback', '', 'SSL');
-			$this->data['cancel_url'] = $this->url->link('checkout/checkout', '', 'SSL');
-			$this->data['picture_url'] = '';
-			$this->data['custom'] = $this->session->data['order_id'];
+			$data['amount'] = $total;
+			$data['body'] = $body;
+			$data['payer_email'] = $order_info['email'];
+			$data['transaction_id'] = $this->session->data['order_id'] . ' - ' . html_entity_decode($order_info['payment_firstname'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['payment_lastname'], ENT_QUOTES, 'UTF-8');
+			$data['return_url'] = $this->url->link('checkout/success');
+			$data['notify_url'] = $this->url->link('payment/khipu_manual/callback', '', 'SSL');
+			$data['cancel_url'] = $this->url->link('checkout/checkout', '', 'SSL');
+			$data['picture_url'] = '';
+			$data['custom'] = $this->session->data['order_id'];
 
-			$banks = khipu_get_available_banks($this->data['receiver_id'], $this->config->get('khipu_manual_secret'), 'opencart-khipu-manual-2.0');
+			$banks = khipu_get_available_banks($data['receiver_id'], $this->config->get('khipu_manual_secret'), 'opencart-khipu-manual-2.0');
 
-			$this->data['javascript'] = khipu_banks_javascript($banks);
+			$data['javascript'] = khipu_banks_javascript($banks);
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu_manual.tpl')) {
 				$this->template = $this->config->get('config_template') . '/template/payment/khipu_manual.tpl';
@@ -58,10 +58,10 @@ class ControllerPaymentKhipuManual extends Controller {
 				$this->template = 'default/template/payment/khipu_manual.tpl';
 			}
 
-			$this->data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
-			$this->data['button_confirm'] = $this->language->get('button_confirm');
-			$this->data['action'] = $this->url->link('payment/khipu_manual/process', '', 'SSL');
-			$this->render();
+			$data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
+			$data['button_confirm'] = $this->language->get('button_confirm');
+			$data['action'] = $this->url->link('payment/khipu_manual/process', '', 'SSL');
+            return $this->load->view($this->template, $data);
 		}
 	}
 
