@@ -27,6 +27,7 @@ class ModelPaymentKhipu extends Model {
       		$method_data = array( 
         		'code'       => 'khipu',
         		'title'      => $this->language->get('text_title'),
+                'terms'      => '',
 				'sort_order' => $this->config->get('khipu_sort_order')
       		);
     	}

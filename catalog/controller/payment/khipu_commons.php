@@ -7,7 +7,6 @@ function khipu_create_payment($receiver_id, $secret, $params, $agent) {
 	$Khipu->authenticate($receiver_id, $secret);
 	$Khipu->setAgent($agent);
 	$create_url_service = $Khipu->loadService('CreatePaymentURL');
-
 	$create_url_service->setParameter('subject', $params['subject']);
 	$create_url_service->setParameter('body', $params['body']);
 	$create_url_service->setParameter('amount', $params['amount']);

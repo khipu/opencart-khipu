@@ -27,6 +27,7 @@ class ModelPaymentKhipuManual extends Model {
       		$method_data = array( 
         		'code'       => 'khipu_manual',
         		'title'      => $this->language->get('text_title'),
+                'terms'      => '',
 				'sort_order' => $this->config->get('khipu_manual_sort_order')
       		);
     	}
