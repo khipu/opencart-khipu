@@ -108,7 +108,7 @@ EOD;
 			$data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
 			$data['button_confirm'] = $this->language->get('button_confirm');
 			$data['action'] = $this->url->link('payment/khipu/process', '', 'SSL');
-            return $this->load->view($this->template, $data);
+            		return $this->load->view($this->template, $data);
 		}
 	}
 
@@ -141,13 +141,9 @@ EOD;
 			}
 			if ($response == 'VERIFIED') {
 				$order_status_id = $this->config->get('khipu_completed_status_id');
-				if (!$order_info['order_status_id']) {
-					$this->model_checkout_order->confirm($order_id, $order_status_id);
-				} else {
-					$this->model_checkout_order->update($order_id, $order_status_id);
-				}
+				$this->model_checkout_order->addOrderHistory($order_id, $order_status_id);
 			} else {
-				$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'));
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('config_order_status_id'));
 			}
 		} else {
 			error_log("no order_info for order_id $order_id\n");

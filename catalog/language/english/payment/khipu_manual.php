@@ -7,7 +7,7 @@
  * @more info available on khipu.com
  */
 // Text
-$_['text_title']    	= 'Electronic transfer (normal)';
+$_['text_title']    	= 'Regular electronic transfer (khipu)';
 $_['text_reason'] 	= 'REASON';
 $_['text_total']	= 'Shipping, Handling, Discounts & Taxes';
 ?>
