@@ -15,10 +15,23 @@ Previo a activar la extensión de khipu debes ejecutar los siguientes pasos:
 - Crear la moneda "Peso Chileno" de código CLP.
 - Configurar tu sitio para usar esta moneda por omisión.
 
-Luego debes ir a la configuración de las extensiones y activar "Transferencia simplificada" y/o "Transferencia electrónica normal". 
+Luego debes ir a la configuración de las extensiones y activar _Transferencia simplificada_ y/o _Transferencia electrónica normal_. 
 
 En la configuración de cada extensión debes incluir tu *id de cobrador* y tu *llave de cobrador*. Estas las puedes obtener de
 las opciones de tu cuenta de cobro en el portal de khipu.
+
+## Empaquetar la extensión
+
+Esta extensión utiliza [lib-php](https://github.com/khipu/lib-php) para la comunicación con khipu. Antes de empaquetar es encesario que 
+actualices los submodulos del proyecto ejecutando:
+
+$ git submodule update --init
+
+Luego debes ejecutar el shell-script que se incluye:
+
+$ ./build.sh
+
+Luego de esto, se genera el archivo _khipu.zip_.
 
 ## Como reportar problemas o ayudar al desarrollo
 
