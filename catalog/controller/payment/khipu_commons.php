@@ -86,11 +86,6 @@ function khipu_get_available_banks($receiver_id, $secret, $agent) {
 }
 
 function khipu_get_verified_order_id($api_version, $receiver_id, $secret, $params) {
-       if ($params['receiver_id'] != $receiver_id) {
-		error_log("recibido " . $params['receiver_id'] . " en el parametro receiver_id");
-                return 0;
-        }
-
 	if ($api_version == '1.3') {
 		return khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, 'opencart-khipu-2.0');
 	} 
@@ -103,6 +98,11 @@ function khipu_get_verified_order_id($api_version, $receiver_id, $secret, $param
 }
 
 function khipu_get_verified_order_id_1_2($receiver_id, $secret, $params, $agent) {
+	if ($params['receiver_id'] != $receiver_id) {
+	error_log("recibido " . $params['receiver_id'] . " en el parametro receiver_id");
+            return 0;
+    }
+
 	$Khipu = new Khipu();
 	$Khipu->authenticate($receiver_id, $secret);
 	$Khipu->setAgent($agent);
@@ -130,5 +130,10 @@ function khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, $agent)
 	$service = $Khipu->loadService('GetPaymentNotification');
 	$service->setDataFromPost();
 	$response = json_decode($service->consult());
+	if ($response->receiver_id != $receiver_id) {
+	error_log("recibido " . $response->receiver_id . " en el receiver_id");
+            return 0;
+    }
+
 	return $response->receiver_id == $receiver_id ? $response->custom : 0;
 }
