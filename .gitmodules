@@ -1,0 +1,3 @@
+[submodule "catalog/controller/payment/lib-khipu"]
+	path = catalog/controller/payment/lib-khipu
+	url = https://github.com/khipu/lib-php
