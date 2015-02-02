@@ -109,42 +109,16 @@ EOD;
 		}
 	}
 
+
 	public function callback() {
-		if (isset($this->request->post['custom'])) {
-			$order_id = $this->request->post['custom'];
-		} else {
-			$order_id = 0;
-		}
-
+		$order_id = khipu_get_verified_order_id($this->request->post['api_version'], $this->config->get('khipu_receiverid'), $this->config->get('khipu_secret'), $this->request->post);
 		$this->load->model('checkout/order');
-
 		$order_info = $this->model_checkout_order->getOrder($order_id);
-
 		if ($order_info) {
-			if ($this->request->post['receiver_id'] != $this->config->get('khipu_receiverid')) {
-				error_log("Received distinct receiver_id: " . $this->request->post['receiver_id'] . "\n");
-				exit(0);
-			}
-			$ret = khipu_verify_payment_notification($this->config->get('khipu_receiverid')
-                                , $this->config->get('khipu_secret')
-                                , $this->request->post
-                                , 'opencart-khipu-2.0');
-
-			$response = $ret['response'];
-
-			if (!$response) {
-				error_log(curl_error($ret['info']));
-				$this->log->write('KHIPU :: CURL failed ' . curl_error($ret['info']) . '(' . curl_errno($ret['info']) . ')');
-			}
-			if ($response == 'VERIFIED') {
-				$order_status_id = $this->config->get('khipu_completed_status_id');
-				if (!$order_info['order_status_id']) {
-					$this->model_checkout_order->confirm($order_id, $order_status_id);
-				} else {
-					$this->model_checkout_order->update($order_id, $order_status_id);
-				}
+			if (!$order_info['order_status_id']) {
+				$this->model_checkout_order->confirm($order_id, $this->config->get('khipu_completed_status_id'));
 			} else {
-				$this->model_checkout_order->confirm($order_id, $this->config->get('config_order_status_id'));
+				$this->model_checkout_order->update($order_id, $this->config->get('khipu_completed_status_id'));
 			}
 		} else {
 			error_log("no order_info for order_id $order_id\n");
