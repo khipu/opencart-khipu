@@ -16,8 +16,16 @@ class ControllerPaymentKhipu extends Controller {
 EOD;
 	}
 
+    function base64url_decode_uncompress($data) {
+        return gzuncompress(base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT)));
+    }
+
+    function base64url_encode_compress($data) {
+        return rtrim(strtr(base64_encode(gzcompress($data)), '+/', '-_'), '=');
+    }
+
 	public function terminal() {
-		$data['javascript'] = $this->get_terminal_javascript(html_entity_decode($_GET['data']));
+		$data['javascript'] = $this->get_terminal_javascript($this->base64url_decode_uncompress($_GET['data']));
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-terminal.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/payment/khipu-terminal.tpl';
 		} else {
@@ -37,7 +45,7 @@ EOD;
 		$json_string = khipu_create_payment($this->config->get('khipu_receiverid')
 				, $this->config->get('khipu_secret')
 				, $this->request->post
-				, 'opencart-khipu-2.1');
+				, 'opencart-khipu-2.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 
 		// We need the string json to use it with the khipu.js
 		$response = json_decode($json_string);
@@ -54,7 +62,7 @@ EOD;
             $this->response->redirect($response->url);
 			return;
 		}
-		$this->response->redirect($this->url->link('payment/khipu/terminal', 'data=' . urlencode($json_string), 'SSL'));
+		$this->response->redirect($this->url->link('payment/khipu/terminal', 'data=' . $this->base64url_encode_compress($json_string), 'SSL'));
 	}
 
 
@@ -89,7 +97,7 @@ EOD;
 
 			$banks = khipu_get_available_banks($data['receiver_id']
 				, $this->config->get('khipu_secret')
-				, 'opencart-khipu-2.1');
+				, 'opencart-khipu-2.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 				
 			$data['javascript'] = khipu_banks_javascript($banks);
 
