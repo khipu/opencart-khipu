@@ -87,11 +87,11 @@ function khipu_get_available_banks($receiver_id, $secret, $agent) {
 
 function khipu_get_verified_order_id($api_version, $receiver_id, $secret, $params) {
 	if ($api_version == '1.3') {
-		return khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, 'opencart-khipu-1.5');
+		return khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, 'opencart-khipu-1.5.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 	} 
 
 	if ($api_version == '1.2'){
-		return khipu_get_verified_order_id_1_2($receiver_id, $secret, $params, 'opencart-khipu-1.5');
+		return khipu_get_verified_order_id_1_2($receiver_id, $secret, $params, 'opencart-khipu-1.5.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 	}
 	error_log("no se encontro version de api adecuada");
 	return 0;
