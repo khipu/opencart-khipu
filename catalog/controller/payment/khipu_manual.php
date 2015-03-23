@@ -8,7 +8,7 @@ class ControllerPaymentKhipuManual extends Controller {
 		$json_string = khipu_create_payment($this->config->get('khipu_manual_receiverid')
 					, $this->config->get('khipu_manual_secret')
 					, $this->request->post
-					, 'opencart-khipu-manual-1.5.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+					, 'opencart-khipu-manual-1.5.3;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 		$response = json_decode($json_string);
 
 		if (!$response) {
@@ -48,7 +48,7 @@ class ControllerPaymentKhipuManual extends Controller {
 			$this->data['picture_url'] = '';
 			$this->data['custom'] = $this->session->data['order_id'];
 
-			$banks = khipu_get_available_banks($this->data['receiver_id'], $this->config->get('khipu_manual_secret'), 'opencart-khipu-manual-1.5.2;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+			$banks = khipu_get_available_banks($this->data['receiver_id'], $this->config->get('khipu_manual_secret'), 'opencart-khipu-manual-1.5.3;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 
 			$this->data['javascript'] = khipu_banks_javascript($banks);
 
@@ -66,7 +66,7 @@ class ControllerPaymentKhipuManual extends Controller {
 	}
 
         public function callback() {
-                $order_id = khipu_get_verified_order_id($this->request->post['api_version'], $this->config->get('khipu_manual_receiverid'), $this->config->get('khipu_manual_secret'), $this->request->post);
+                $order_id = khipu_get_verified_order_id($this->request->post['api_version'], $this->config->get('khipu_manual_receiverid'), $this->config->get('khipu_manual_secret'), $this->request->post, $this->config->get('config_url'), $this->config->get('config_name'));
                 $this->load->model('checkout/order');
                 $order_info = $this->model_checkout_order->getOrder($order_id);
                 if ($order_info) {
