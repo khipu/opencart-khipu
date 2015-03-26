@@ -45,7 +45,7 @@ EOD;
 		$json_string = khipu_create_payment($this->config->get('khipu_receiverid')
 				, $this->config->get('khipu_secret')
 				, $this->request->post
-				, 'opencart-khipu-2.3;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+				, 'opencart-khipu-2.4;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 
 		// We need the string json to use it with the khipu.js
 		$response = json_decode($json_string);
@@ -97,7 +97,7 @@ EOD;
 
 			$banks = khipu_get_available_banks($data['receiver_id']
 				, $this->config->get('khipu_secret')
-				, 'opencart-khipu-2.3;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+				, 'opencart-khipu-2.4;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 				
 			$data['javascript'] = khipu_banks_javascript($banks);
 
