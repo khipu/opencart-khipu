@@ -8,7 +8,7 @@ class ControllerPaymentKhipuManual extends Controller {
 		$json_string = khipu_create_payment($this->config->get('khipu_manual_receiverid')
 					, $this->config->get('khipu_manual_secret')
 					, $this->request->post
-					, 'opencart-khipu-manual-2.4;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+					, 'opencart-khipu-manual-2.5;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 		$response = json_decode($json_string);
 
 		if (!$response) {
@@ -50,7 +50,7 @@ class ControllerPaymentKhipuManual extends Controller {
 
             $banks = khipu_get_available_banks($data['receiver_id']
                 , $this->config->get('khipu_manual_secret')
-                , 'opencart-khipu-manual-2.4;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+                , 'opencart-khipu-manual-2.5;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 
 			$data['javascript'] = khipu_banks_javascript($banks);
 
