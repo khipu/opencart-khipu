@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']					 = 'Transferencia electrónica (normal)';
+$_['heading_title']					 = 'Transferencia normal';
 
 // Text
 $_['text_payment']					 = 'Payment';

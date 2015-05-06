@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']					 = 'Transferencia simplificada (khipu)';
+$_['heading_title']					 = 'khipu - Transferencia simplificada';
 
 // Text
 $_['text_payment']					 = 'Payment';
