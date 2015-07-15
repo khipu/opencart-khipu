@@ -134,6 +134,9 @@ class ControllerPaymentKhipu extends Controller {
 	}
 
 	private function validate() {
+        if(!extension_loaded('curl')) {
+            $this->error['warning'] = $this->language->get('curl_not_found');
+        }
 		if (!$this->user->hasPermission('modify', 'payment/khipu')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}

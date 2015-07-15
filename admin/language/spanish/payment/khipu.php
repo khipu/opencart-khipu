@@ -19,4 +19,5 @@ $_['entry_sort_order']				 = 'Sort Order:';
 $_['error_permission']				 = 'Warning: You do not have permission to modify payment khipu!';
 $_['error_receiverid']					 = 'Receiver ID required!';
 $_['error_secret']					 = 'Secret required!';
+$_['curl_not_found']					 = 'La extensión PHP Curl no se encuentra. Por favor habilítela. Más información: http://php.net/manual/es/book.curl.php';
 ?>
