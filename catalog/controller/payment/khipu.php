@@ -42,10 +42,43 @@ EOD;
 
 	public function process() {
 
+        $this->load->model('checkout/order');
+
+        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+        $data['receiver_id'] = $this->config->get('khipu_receiverid');
+        $data['subject'] = html_entity_decode($this->config->get('config_name') . ' Order #' . $this->session->data['order_id'], ENT_QUOTES, 'UTF-8');
+
+        $body = '';
+        foreach ($this->cart->getProducts() as $product) {
+            $body .= $product['name'] . ' ' . $product['model'] . ' x ' . $product['quantity'] . ' ';
+        }
+
+        $total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+
+        $data['amount'] = $total;
+        $data['body'] = $body;
+        $data['payer_email'] = $order_info['email'];
+        $data['transaction_id'] = $this->session->data['order_id'] . ' - ' . html_entity_decode($order_info['payment_firstname'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['payment_lastname'], ENT_QUOTES, 'UTF-8');
+        $data['return_url'] = $this->url->link('checkout/success');
+        $data['notify_url'] = $this->url->link('payment/khipu/callback', '', 'SSL');
+        $data['cancel_url'] = $this->url->link('checkout/checkout', '', 'SSL');
+        $data['picture_url'] = '';
+        $data['custom'] = $this->session->data['order_id'];
+        $data['bank_id'] = $this->request->post['bank_id'];
+
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/payment/khipu.tpl';
+        } else {
+            $this->template = 'default/template/payment/khipu.tpl';
+        }
+
+
 		$json_string = khipu_create_payment($this->config->get('khipu_receiverid')
 				, $this->config->get('khipu_secret')
-				, $this->request->post
-				, 'opencart-khipu-2.6;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+				, $data
+				, 'opencart-khipu-2.7;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 
 		// We need the string json to use it with the khipu.js
 		$response = json_decode($json_string);
@@ -83,21 +116,9 @@ EOD;
 				$body .= $product['name'] . ' ' . $product['model'] . ' x ' . $product['quantity'] . ' ';
 			}
 
-			$total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
-
-			$data['amount'] = $total;
-			$data['body'] = $body;
-			$data['payer_email'] = $order_info['email'];
-			$data['transaction_id'] = $this->session->data['order_id'] . ' - ' . html_entity_decode($order_info['payment_firstname'], ENT_QUOTES, 'UTF-8') . ' ' . html_entity_decode($order_info['payment_lastname'], ENT_QUOTES, 'UTF-8');
-			$data['return_url'] = $this->url->link('checkout/success');
-			$data['notify_url'] = $this->url->link('payment/khipu/callback', '', 'SSL');
-			$data['cancel_url'] = $this->url->link('checkout/checkout', '', 'SSL');
-			$data['picture_url'] = '';
-			$data['custom'] = $this->session->data['order_id'];
-
 			$banks = khipu_get_available_banks($data['receiver_id']
 				, $this->config->get('khipu_secret')
-				, 'opencart-khipu-2.6;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+				, 'opencart-khipu-2.7;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
 				
 			$data['javascript'] = khipu_banks_javascript($banks);
 
