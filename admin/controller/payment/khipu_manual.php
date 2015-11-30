@@ -120,7 +120,7 @@ class ControllerPaymentKhipuManual extends Controller {
 			$this->data['khipu_manual_sort_order'] = $this->config->get('khipu_manual_sort_order');
 		}
 
-		$this->template = 'payment/khipu_manual.tpl';
+		$this->template = 'payment/khipu-manual.tpl';
 		$this->children = array(
 			'common/header',
 			'common/footer'
