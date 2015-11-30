@@ -13,10 +13,6 @@ function khipu_create_payment($receiver_id, $secret, $params) {
     $payments = new Khipu\Client\PaymentsApi($client);
 
 
-    //$currency = Currency::getCurrency($cart->id_currency);
-
-    //$precision = $currency['decimals'] * _PS_PRICE_COMPUTE_PRECISION_;
-
     $createPaymentResponse = $payments->paymentsPost(
         $params['subject']
         , $params['currency_code']

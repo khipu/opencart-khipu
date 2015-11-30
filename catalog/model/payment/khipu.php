@@ -14,7 +14,7 @@ class ModelPaymentKhipu extends Model {
 		}	
 
 		$currencies = array(
-			'CLP'
+			'CLP', 'BOB'
 		);
 		
 		if (!in_array(strtoupper($this->currency->getCode()), $currencies)) {

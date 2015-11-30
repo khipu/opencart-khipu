@@ -48,6 +48,18 @@ class ControllerPaymentKhipuManual extends Controller {
 		$this->response->redirect($createPaymentResponse->getTransferUrl());
 	}
 
+    function khipu_error($exception) {
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-error.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/payment/khipu-error.tpl';
+        } else {
+            $this->template = 'default/template/payment/khipu-error.tpl';
+        }
+        $data['header'] = $this->load->controller('common/header');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['exception'] = $exception;
+        $this->response->setOutput( $this->load->view($this->template, $data));
+    }
+
 
 	public function index() {
 		$this->language->load('payment/khipu_manual');
