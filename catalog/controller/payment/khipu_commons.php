@@ -1,22 +1,47 @@
 <?php
 
-require_once('lib-khipu/src/Khipu.php');
+require __DIR__ . '/vendor/autoload.php';
 
-function khipu_create_payment($receiver_id, $secret, $params, $agent) {
-	$Khipu = new Khipu();
-	$Khipu->authenticate($receiver_id, $secret);
-	$Khipu->setAgent($agent);
-	$create_url_service = $Khipu->loadService('CreatePaymentURL');
-	$create_url_service->setParameter('subject', $params['subject']);
-	$create_url_service->setParameter('body', $params['body']);
-	$create_url_service->setParameter('amount', $params['amount']);
-	$create_url_service->setParameter('transaction_id', $params['transaction_id']);
-	$create_url_service->setParameter('custom', $params['custom']);
-	$create_url_service->setParameter('payer_email', $params['payer_email']);;
-	$create_url_service->setParameter('notify_url', $params['notify_url']);
-	$create_url_service->setParameter('bank_id', $params['bank_id']);
-	$create_url_service->setParameter('return_url', $params['return_url']);
-	return  $create_url_service->createUrl();
+function khipu_create_payment($receiver_id, $secret, $params) {
+
+    $configuration = new Khipu\Configuration();
+    $configuration->setSecret($secret);
+    $configuration->setReceiverId($receiver_id);
+    $configuration->setPlatform('opencart-khipu', '2.8.0');
+
+    $client = new Khipu\ApiClient($configuration);
+    $payments = new Khipu\Client\PaymentsApi($client);
+
+
+    //$currency = Currency::getCurrency($cart->id_currency);
+
+    //$precision = $currency['decimals'] * _PS_PRICE_COMPUTE_PRECISION_;
+
+    $createPaymentResponse = $payments->paymentsPost(
+        $params['subject']
+        , $params['currency_code']
+        , $params['amount']
+        , $params['transaction_id']
+        , $params['custom']
+        , $params['body']
+        , $params['bank_id']
+        , $params['return_url']
+        , $params['cancel_url']
+        , null
+        , $params['notify_url']
+        , '1.3'
+        , null
+        , null
+        , null
+        , $params['payer_email']
+        , null
+        , null
+        , null
+        , null
+    );
+    return $createPaymentResponse;
+
+
 }
 
 
@@ -35,13 +60,13 @@ function khipu_banks_javascript($banks) {
                                 $('#root-bank').val(rootId)
                         }
 EOD;
-                foreach ($banks->banks as $bank) {
-                        if (!$bank->parent) {
-                                $javascript .= "bankRootSelect.append('<option value=\"$bank->id\">$bank->name</option>');\n";
-                                $javascript .= "bankOptions['$bank->id'] = [];\n";
-                                $javascript .= "bankOptions['$bank->id'].push('<option value=\"$bank->id\">$bank->type</option>')\n";
+                foreach ($banks as $bank) {
+                        if (!$bank->getParent()) {
+                                $javascript .= "bankRootSelect.append('<option value=\"" . $bank->getBankId() . "\">" . $bank->getName() . "</option>');\n";
+                                $javascript .= "bankOptions['" . $bank->getBankId() . "'] = [];\n";
+                                $javascript .= "bankOptions['" . $bank->getBankId() . "'].push('<option value=\"" . $bank->getBankId() . "\">" . $bank->getType() . "</option>')\n";
                         } else {
-                                $javascript .= "bankOptions['$bank->parent'].push('<option value=\"$bank->id\">$bank->type</option>');\n";
+                                $javascript .= "bankOptions['" . $bank->getParent() . "'].push('<option value=\"" . $bank->getBankId() . "\">" . $bank->getType() . "</option>');\n";
                         }
                 }
                 $javascript .= <<<EOD
@@ -77,63 +102,31 @@ EOD;
 	return $javascript;
 }
 
-function khipu_get_available_banks($receiver_id, $secret, $agent) {
-	$Khipu = new Khipu();
-	$Khipu->authenticate($receiver_id, $secret);
-	$Khipu->setAgent($agent);
-	$service = $Khipu->loadService('ReceiverBanks');
-	return json_decode($service->consult());
+function khipu_get_available_banks($receiver_id, $secret) {
+
+    $configuration = new Khipu\Configuration();
+    $configuration->setSecret($secret);
+    $configuration->setReceiverId($receiver_id);
+    $configuration->setPlatform('opencart-khipu', '2.8.0');
+
+    $client = new Khipu\ApiClient($configuration);
+    $banks = new Khipu\Client\BanksApi($client);
+
+    $banksResponse = $banks->banksGet();
+	return $banksResponse->getBanks();
 }
 
-function khipu_get_verified_order_id($api_version, $receiver_id, $secret, $params, $config_url, $config_name) {
+function khipu_get_payment($api_version, $receiver_id, $secret, $params) {
 	if ($api_version == '1.3') {
-		return khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, 'opencart-khipu-2.7;;'.$config_url.';;'.$config_name);
-	} 
+        $configuration = new Khipu\Configuration();
+        $configuration->setSecret($secret);
+        $configuration->setReceiverId($receiver_id);
+        $configuration->setPlatform('opencart-khipu', '2.8.0');
 
-	if ($api_version == '1.2'){
-		return khipu_get_verified_order_id_1_2($receiver_id, $secret, $params, 'opencart-khipu-2.7;;'.$config_url.';;'.$config_name);
-	}
-	error_log("no se encontro version de api adecuada");
+        $client = new Khipu\ApiClient($configuration);
+        $payments = new Khipu\Client\PaymentsApi($client);
+
+        return $payments->paymentsGet($params['notification_token']);
+    }
 	return 0;
-}
-
-function khipu_get_verified_order_id_1_2($receiver_id, $secret, $params, $agent) {
-	if ($params['receiver_id'] != $receiver_id) {
-	error_log("recibido " . $params['receiver_id'] . " en el parametro receiver_id");
-            return 0;
-    }
-
-	$Khipu = new Khipu();
-	$Khipu->authenticate($receiver_id, $secret);
-	$Khipu->setAgent($agent);
-	$service = $Khipu->loadService('VerifyPaymentNotification');
-	$service->setParameter('return_url', $params['return_url']);
-	$service->setParameter('api_version', $params['api_version']);
-	$service->setParameter('receiver_id', $params['receiver_id']);
-	$service->setParameter('notification_id', $params['notification_id']);
-	$service->setParameter('subject', $params['subject']);
-	$service->setParameter('amount', $params['amount']);
-	$service->setParameter('currency', $params['currency']);
-	$service->setParameter('custom', $params['custom']);
-	$service->setParameter('transaction_id', $params['transaction_id']);
-	$service->setParameter('payer_email', $params['payer_email']);
-	$service->setParameter('notification_signature', $params['notification_signature']);
-	$verify = $service->verify();
-	return $verify['response'] == 'VERIFIED' ? $params['custom'] : 0;
-}
-
-
-function khipu_get_verified_order_id_1_3($receiver_id, $secret, $params, $agent) {
-	$Khipu = new Khipu();
-	$Khipu->authenticate($receiver_id, $secret);
-	$Khipu->setAgent($agent);
-	$service = $Khipu->loadService('GetPaymentNotification');
-	$service->setDataFromPost();
-	$response = json_decode($service->consult());
-	if ($response->receiver_id != $receiver_id) {
-	error_log("recibido " . $response->receiver_id . " en el receiver_id");
-            return 0;
-    }
-
-	return $response->receiver_id == $receiver_id ? $response->custom : 0;
 }

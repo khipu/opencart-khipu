@@ -40,6 +40,18 @@ EOD;
 		$this->response->setOutput( $this->load->view($this->template, $data));
 	}
 
+    function khipu_error($exception) {
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-error.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/payment/khipu-error.tpl';
+        } else {
+            $this->template = 'default/template/payment/khipu-error.tpl';
+        }
+        $data['header'] = $this->load->controller('common/header');
+        $data['footer'] = $this->load->controller('common/footer');
+        $data['exception'] = $exception;
+        $this->response->setOutput( $this->load->view($this->template, $data));
+    }
+
 	public function process() {
 
         $this->load->model('checkout/order');
@@ -66,6 +78,7 @@ EOD;
         $data['picture_url'] = '';
         $data['custom'] = $this->session->data['order_id'];
         $data['bank_id'] = $this->request->post['bank_id'];
+        $data['currency_code'] = $order_info['currency_code'];
 
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu.tpl')) {
@@ -75,27 +88,29 @@ EOD;
         }
 
 
-		$json_string = khipu_create_payment($this->config->get('khipu_receiverid')
-				, $this->config->get('khipu_secret')
-				, $data
-				, 'opencart-khipu-2.7;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
+        try {
+            $createPaymentResponse = khipu_create_payment($this->config->get('khipu_receiverid')
+                , $this->config->get('khipu_secret')
+                , $data);
 
-		// We need the string json to use it with the khipu.js
-		$response = json_decode($json_string);
+        } catch(\Khipu\ApiException $e) {
+            $this->khipu_error($e->getResponseObject());
+            return;
+        }
 
-		if (!$response) {
-			// TODO ERROR //return $this->comm_error();
-			error_log('no response from khipu');
+
+		if (!$createPaymentResponse->getReadyForTerminal()) {
+            $this->response->redirect($createPaymentResponse->getPaymentUrl());
 			return;
 		}
 
-		$readyForTerminal = 'ready-for-terminal';
+        $data = array(
+            'id' => $createPaymentResponse->getPaymentId(),
+            'url' => $createPaymentResponse->getPaymentUrl(),
+            'ready-for-terminal' => $createPaymentResponse->getReadyForTerminal()
+        );
 
-		if (!$response->$readyForTerminal) {
-            $this->response->redirect($response->url);
-			return;
-		}
-		$this->response->redirect($this->url->link('payment/khipu/terminal', 'data=' . $this->base64url_encode_compress($json_string), 'SSL'));
+		$this->response->redirect($this->url->link('payment/khipu/terminal', 'data=' . $this->base64url_encode_compress(json_encode($data)), 'SSL'));
 	}
 
 
@@ -116,10 +131,12 @@ EOD;
 				$body .= $product['name'] . ' ' . $product['model'] . ' x ' . $product['quantity'] . ' ';
 			}
 
-			$banks = khipu_get_available_banks($data['receiver_id']
-				, $this->config->get('khipu_secret')
-				, 'opencart-khipu-2.7;;'.$this->config->get('config_url').';;'.$this->config->get('config_name'));
-				
+            try {
+                $banks = khipu_get_available_banks($data['receiver_id'], $this->config->get('khipu_secret'));
+            } catch(\Khipu\ApiException $e) {
+                error_log(print_r($e->getResponseObject(), TRUE));
+            }
+
 			$data['javascript'] = khipu_banks_javascript($banks);
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu.tpl')) {
@@ -131,19 +148,31 @@ EOD;
 			$data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
 			$data['button_confirm'] = $this->language->get('button_confirm');
 			$data['action'] = $this->url->link('payment/khipu/process', '', 'SSL');
-            		return $this->load->view($this->template, $data);
+            return $this->load->view($this->template, $data);
 		}
 	}
 
 	public function callback() {
-		$order_id = khipu_get_verified_order_id($this->request->post['api_version'], $this->config->get('khipu_receiverid'), $this->config->get('khipu_secret'), $this->request->post, $this->config->get('config_url'), $this->config->get('config_name'));
-		$this->load->model('checkout/order');
-		$order_info = $this->model_checkout_order->getOrder($order_id);
-		if ($order_info) {
-			$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('khipu_completed_status_id'));
-		} else {
-			error_log("no order_info for order_id $order_id\n");
-		}
+		$payment = khipu_get_payment($this->request->post['api_version'], $this->config->get('khipu_receiverid'), $this->config->get('khipu_secret'), $this->request->post);
+
+        if(! $payment instanceof \Khipu\Model\PaymentsResponse) {
+            error_log("invalid response\n");
+            return;
+        }
+
+
+        $this->load->model('checkout/order');
+        $order_info = $this->model_checkout_order->getOrder($payment->getCustom());
+        $total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
+
+        if($payment->getReceiverId() == $this->config->get('khipu_receiverid')
+            && $total == $payment->getAmount()
+            && $order_info['currency_code'] == $payment->getCurrency()
+        ) {
+            $this->model_checkout_order->addOrderHistory($payment->getCustom(), $this->config->get('khipu_completed_status_id'));
+        } else {
+            error_log("invalid response\n");
+        }
 	}
 }
 

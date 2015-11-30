@@ -134,7 +134,7 @@ class ControllerPaymentKhipuManual extends Controller {
         $data['footer'] = $this->load->controller('common/footer');
         $data['column_left'] = $this->load->controller('common/column_left');
 
-        $this->response->setOutput($this->load->view('payment/khipu_manual.tpl', $data));
+        $this->response->setOutput($this->load->view('payment/khipu-manual.tpl', $data));
 	}
 
 	private function validate() {
