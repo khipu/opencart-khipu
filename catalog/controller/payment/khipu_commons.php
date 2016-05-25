@@ -7,7 +7,7 @@ function khipu_create_payment($receiver_id, $secret, $params) {
     $configuration = new Khipu\Configuration();
     $configuration->setSecret($secret);
     $configuration->setReceiverId($receiver_id);
-    $configuration->setPlatform('opencart-khipu', '2.8.0');
+    $configuration->setPlatform('opencart-khipu', '2.8.1');
 
     $client = new Khipu\ApiClient($configuration);
     $payments = new Khipu\Client\PaymentsApi($client);
@@ -45,22 +45,22 @@ function khipu_banks_javascript($banks) {
 	$javascript = <<<EOD
 <script>
 (function ($) {
-                var bankRootSelect = $('#root-bank')
-                var bankOptions = []
-                var selectedRootBankId = 0
-                var selectedBankId = 0
+                var bankRootSelect = $('#root-bank');
+                var bankOptions = [];
+                var selectedRootBankId = 0;
+                var selectedBankId = 0;
                 bankRootSelect.attr("disabled", "disabled");
 
                 function updateBankOptions(rootId, bankId) {
                         if (rootId) {
-                                $('#root-bank').val(rootId)
+                                $('#root-bank').val(rootId);
                         }
 EOD;
                 foreach ($banks as $bank) {
                         if (!$bank->getParent()) {
                                 $javascript .= "bankRootSelect.append('<option value=\"" . $bank->getBankId() . "\">" . $bank->getName() . "</option>');\n";
                                 $javascript .= "bankOptions['" . $bank->getBankId() . "'] = [];\n";
-                                $javascript .= "bankOptions['" . $bank->getBankId() . "'].push('<option value=\"" . $bank->getBankId() . "\">" . $bank->getType() . "</option>')\n";
+                                $javascript .= "bankOptions['" . $bank->getBankId() . "'].push('<option value=\"" . $bank->getBankId() . "\">" . $bank->getType() . "</option>');\n";
                         } else {
                                 $javascript .= "bankOptions['" . $bank->getParent() . "'].push('<option value=\"" . $bank->getBankId() . "\">" . $bank->getType() . "</option>');\n";
                         }
@@ -103,7 +103,7 @@ function khipu_get_available_banks($receiver_id, $secret) {
     $configuration = new Khipu\Configuration();
     $configuration->setSecret($secret);
     $configuration->setReceiverId($receiver_id);
-    $configuration->setPlatform('opencart-khipu', '2.8.0');
+    $configuration->setPlatform('opencart-khipu', '2.8.1');
 
     $client = new Khipu\ApiClient($configuration);
     $banks = new Khipu\Client\BanksApi($client);
@@ -117,7 +117,7 @@ function khipu_get_payment($api_version, $receiver_id, $secret, $params) {
         $configuration = new Khipu\Configuration();
         $configuration->setSecret($secret);
         $configuration->setReceiverId($receiver_id);
-        $configuration->setPlatform('opencart-khipu', '2.8.0');
+        $configuration->setPlatform('opencart-khipu', '2.8.1');
 
         $client = new Khipu\ApiClient($configuration);
         $payments = new Khipu\Client\PaymentsApi($client);

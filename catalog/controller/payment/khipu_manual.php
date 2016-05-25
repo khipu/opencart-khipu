@@ -49,11 +49,7 @@ class ControllerPaymentKhipuManual extends Controller {
 	}
 
     function khipu_error($exception) {
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-error.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/khipu-error.tpl';
-        } else {
-            $this->template = 'default/template/payment/khipu-error.tpl';
-        }
+        $this->template = 'payment/khipu-error';
         $data['header'] = $this->load->controller('common/header');
         $data['footer'] = $this->load->controller('common/footer');
         $data['exception'] = $exception;
@@ -85,11 +81,7 @@ class ControllerPaymentKhipuManual extends Controller {
 
             $data['javascript'] = khipu_banks_javascript($banks);
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-manual.tpl')) {
-				$this->template = $this->config->get('config_template') . '/template/payment/khipu-manual.tpl';
-			} else {
-				$this->template = 'default/template/payment/khipu-manual.tpl';
-			}
+            $this->template = 'payment/khipu-manual';
 
 			$data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
 			$data['button_confirm'] = $this->language->get('button_confirm');

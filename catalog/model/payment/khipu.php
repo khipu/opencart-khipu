@@ -13,20 +13,12 @@ class ModelPaymentKhipu extends Model {
 			$status = false;
 		}	
 
-		$currencies = array(
-			'CLP', 'BOB'
-		);
-		
-		if (!in_array(strtoupper($this->currency->getCode()), $currencies)) {
-			$status = false;
-		}			
-					
 		$method_data = array();
 	
 		if ($status) {  
       		$method_data = array( 
         		'code'       => 'khipu',
-        		'title'      => $this->language->get('text_title'),
+        		'title'      => '<img src="https://bi.khipu.com/150x50/capsule/khipu/transparent/'.$this->config->get('khipu_receiverid').'"> ' . $this->language->get('text_title'),
                 'terms'      => '',
 				'sort_order' => $this->config->get('khipu_sort_order')
       		);

@@ -7,11 +7,12 @@ class ControllerPaymentKhipu extends Controller {
 	protected function get_terminal_javascript($data) {
 		return <<<EOD
 <script>
-	window.onload = function () {
+	function openKhipu() {
 		KhipuLib.onLoad({
 			data: $data
-    	})
+    	});
 	}
+	window.onload = openKhipu;
 </script>
 EOD;
 	}
@@ -26,13 +27,10 @@ EOD;
 
 	public function terminal() {
 		$data['javascript'] = $this->get_terminal_javascript($this->base64url_decode_uncompress($_GET['data']));
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-terminal.tpl')) {
-			$this->template = $this->config->get('config_template') . '/template/payment/khipu-terminal.tpl';
-		} else {
-			$this->template = 'default/template/payment/khipu-terminal.tpl';
-		}
-		$data['wait_message'] = $this->language->get('Estamos iniciando el terminal de pagos khipu, por favor espera unos minutos.<br>No cierres esta página, una vez que completes el pago serás redirigido automáticamente.');
-		$data['header'] = $this->load->controller('common/header');
+        $this->template = 'payment/khipu-terminal';
+		$data['wait_message'] = $this->language->get('Estamos iniciando la aplicación khipu, por favor espera unos minutos.<br>No cierres esta página, una vez que completes el pago serás redirigido automáticamente.');
+		$data['start_khipu'] = $this->language->get('Si pasado unos segundos no se ha abierto la aplicación<br><a href="javascript:openKhipu();" class="btn btn-default">Pincha este botón para abrirla</a>');
+        $data['header'] = $this->load->controller('common/header');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -41,11 +39,7 @@ EOD;
 	}
 
     function khipu_error($exception) {
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu-error.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/khipu-error.tpl';
-        } else {
-            $this->template = 'default/template/payment/khipu-error.tpl';
-        }
+        $this->template = 'payment/khipu-error';
         $data['header'] = $this->load->controller('common/header');
         $data['footer'] = $this->load->controller('common/footer');
         $data['exception'] = $exception;
@@ -81,11 +75,7 @@ EOD;
         $data['currency_code'] = $order_info['currency_code'];
 
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/khipu.tpl';
-        } else {
-            $this->template = 'default/template/payment/khipu.tpl';
-        }
+        $this->template = 'payment/khipu';
 
 
         try {
@@ -139,11 +129,7 @@ EOD;
 
 			$data['javascript'] = khipu_banks_javascript($banks);
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/khipu.tpl')) {
-				$this->template = $this->config->get('config_template') . '/template/payment/khipu.tpl';
-			} else {
-				$this->template = 'default/template/payment/khipu.tpl';
-			}
+            $this->template = 'payment/khipu';
 
 			$data['bank_selector_label'] = $this->language->get('Selecciona el banco para pagar');
 			$data['button_confirm'] = $this->language->get('button_confirm');
