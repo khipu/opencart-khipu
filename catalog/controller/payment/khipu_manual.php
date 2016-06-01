@@ -103,6 +103,7 @@ class ControllerPaymentKhipuManual extends Controller {
         $total = $this->currency->format($order_info['total'], $order_info['currency_code'], false, false);
 
         if($payment->getReceiverId() == $this->config->get('khipu_receiverid')
+            && $payment->getStatus() == 'done'
             && $total == $payment->getAmount()
             && $order_info['currency_code'] == $payment->getCurrency()
         ) {
