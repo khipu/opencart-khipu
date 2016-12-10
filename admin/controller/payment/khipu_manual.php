@@ -12,7 +12,7 @@ class ControllerPaymentKhipuManual extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->model_setting_setting->editSetting('khipu_manual', $this->request->post);
 			$this->session->data['success'] = $this->language->get('text_success');
-            $this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'));
+            $this->response->redirect($this->url->link('extension/payment/khipu_manual', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
         $data['text_edit'] = $this->language->get('text_edit');
@@ -26,7 +26,7 @@ class ControllerPaymentKhipuManual extends Controller {
 		$data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_sort_order'] = $this->language->get('entry_sort_order');
-	
+
 
 		$data['entry_receiverid'] = $this->language->get('entry_receiverid');
 		$data['entry_secret'] = $this->language->get('entry_secret');
@@ -72,7 +72,7 @@ class ControllerPaymentKhipuManual extends Controller {
 
    		$data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),      		
+			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
 			'separator' => false
    		);
 
@@ -90,7 +90,7 @@ class ControllerPaymentKhipuManual extends Controller {
 
 		$data['action'] = $this->url->link('payment/khipu_manual', 'token=' . $this->session->data['token'], 'SSL');
 
-		$data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+		$data['cancel'] = $this->url->link('extension/extension', 'token=' . $this->session->data['token'], 'SSL');
 
 		if (isset($this->request->post['khipu_manual_receiverid'])) {
 			$data['khipu_manual_receiverid'] = $this->request->post['khipu_manual_receiverid'];
@@ -123,7 +123,7 @@ class ControllerPaymentKhipuManual extends Controller {
 		} else {
 			$data['khipu_manual_status'] = $this->config->get('khipu_manual_status');
 		}
-		
+
 		if (isset($this->request->post['khipu_manual_sort_order'])) {
 			$data['khipu_manual_sort_order'] = $this->request->post['khipu_manual_sort_order'];
 		} else {
