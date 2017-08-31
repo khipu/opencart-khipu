@@ -1,0 +1,21 @@
+{{ header }}
+<div class="container">
+	<div id="wait-msg" class="error">
+		<h2>Error de comunicación con khipu</h2>
+		<ul>
+			<li><strong>Código</strong>: {{ exceptionStatus }}</li>
+			<li><strong>Mensaje</strong>: {{ exceptionMessage }}</li>
+			{% if exceptionError %}
+        	<li>Errores
+			<ul>
+                {% for error in exceptionError %}
+                    <li><strong>{{ error.field }}</strong>: {{ error.message }}
+                {% endfor %}
+			</ul>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+</div>
+{{ footer }}
+
