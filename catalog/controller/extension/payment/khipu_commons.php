@@ -7,36 +7,33 @@ function khipu_create_payment($receiver_id, $secret, $params) {
     $configuration = new Khipu\Configuration();
     $configuration->setSecret($secret);
     $configuration->setReceiverId($receiver_id);
-    $configuration->setPlatform('opencart-khipu', '3.0.1');
+    $configuration->setPlatform('opencart-khipu', '3.0.2');
 
     $client = new Khipu\ApiClient($configuration);
     $payments = new Khipu\Client\PaymentsApi($client);
 
+    $options = array(
+          'transaction_id' => $params['transaction_id']
+        , 'custom' => $params['custom']
+        , 'body' => $params['body']
+        , 'return_url' => $params['return_url']
+        , 'cancel_url' => $params['cancel_url']
+        , 'notify_url' => $params['notify_url']
+        , 'notify_api_version' => '1.3'
+        , 'payer_email' => $params['payer_email']
+    );
+
+    if(array_key_exists('bank_id', $params)){
+        $options['bank_id'] = $params['bank_id'];
+    }
 
     $createPaymentResponse = $payments->paymentsPost(
         $params['subject']
         , $params['currency_code']
         , $params['amount']
-        , $params['transaction_id']
-        , $params['custom']
-        , $params['body']
-        , array_key_exists('bank_id', $params) ? $params['bank_id'] : null
-        , $params['return_url']
-        , $params['cancel_url']
-        , null
-        , $params['notify_url']
-        , '1.3'
-        , null
-        , null
-        , null
-        , $params['payer_email']
-        , null
-        , null
-        , null
-        , null
+        , $options
     );
     return $createPaymentResponse;
-
 
 }
 
@@ -103,7 +100,7 @@ function khipu_get_available_banks($receiver_id, $secret) {
     $configuration = new Khipu\Configuration();
     $configuration->setSecret($secret);
     $configuration->setReceiverId($receiver_id);
-    $configuration->setPlatform('opencart-khipu', '3.0.1');
+    $configuration->setPlatform('opencart-khipu', '3.0.2');
 
     $client = new Khipu\ApiClient($configuration);
     $banks = new Khipu\Client\BanksApi($client);
@@ -117,7 +114,7 @@ function khipu_get_payment($api_version, $receiver_id, $secret, $params) {
         $configuration = new Khipu\Configuration();
         $configuration->setSecret($secret);
         $configuration->setReceiverId($receiver_id);
-        $configuration->setPlatform('opencart-khipu', '3.0.1');
+        $configuration->setPlatform('opencart-khipu', '3.0.2');
 
         $client = new Khipu\ApiClient($configuration);
         $payments = new Khipu\Client\PaymentsApi($client);
