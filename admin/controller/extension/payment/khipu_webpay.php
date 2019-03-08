@@ -108,7 +108,7 @@ class ControllerExtensionPaymentKhipuWebpay extends Controller {
 
 
 
-		$this->response->setOutput($this->load->view('extension/payment/khipupayme', $data));
+		$this->response->setOutput($this->load->view('extension/payment/khipuwebpay', $data));
 	}
 
 	private function validate() {

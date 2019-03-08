@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']                 = 'khipu WebPay - Paga con cualquier Tarjeta de Crédito o RedCompra (Available in Chile).';
+$_['heading_title']                 = 'khipu WebPay - Paga con cualquier Tarjeta de Crédito o RedCompra (Available in Chile)';
 
 // Text
 $_['text_edit']                     = 'Edit khipu WebPay';

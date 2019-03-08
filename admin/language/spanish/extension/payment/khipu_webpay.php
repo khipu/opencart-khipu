@@ -1,13 +1,13 @@
 <?php
 // Heading
-$_['heading_title']					= 'khipu WebPay - Paga con cualquier Tarjeta de Crédito o RedCompra.';
+$_['heading_title']					= 'khipu WebPay - Paga con cualquier Tarjeta de Crédito o RedCompra';
 
 // Text
 $_['text_edit']                     = 'Editar khipu WebPay';
 $_['text_payment']					= 'Payment';
 $_['text_success']					= 'Éxito: Has modificado los detalles de khipu WebPay!';
 $_['text_extension']                = 'Extensiones';
-$_['text_khipu_payme']				= '<a onclick="window.open(\'https://khipu.com\');"><img src="view/image/payment/khipu.png" alt="khipu" title="khipu" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_khipu_webpay']				= '<a onclick="window.open(\'https://khipu.com\');"><img src="view/image/payment/khipu.png" alt="khipu" title="khipu" style="border: 1px solid #EEEEEE;" /></a>';
 
 // Entry
 $_['entry_receiverid']				= 'Receiver ID:';
