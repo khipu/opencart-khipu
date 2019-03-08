@@ -2,4 +2,4 @@
 
 rm -rf dist
 mkdir dist
-zip -r khipu.ocmod.zip admin catalog
+zip -r dist/khipu.ocmod.zip admin catalog
