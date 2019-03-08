@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']					 = 'Transferencia normal (Avaliable in Chile)';
+$_['heading_title']					 = 'Transferencia normal (Available in Chile)';
 
 // Text
 $_['text_edit']                     = 'Edit khipu';
