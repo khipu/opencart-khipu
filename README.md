@@ -29,9 +29,9 @@ $ git submodule update --init
 
 Luego debes ejecutar el shell-script que se incluye:
 
-$ ./build.sh
+$ ./package.sh
 
-Luego de esto, se genera el archivo _khipu.zip_.
+Luego de esto, se genera el archivo _dist/khipu.ocmod.zip_.
 
 ## Como reportar problemas o ayudar al desarrollo
 

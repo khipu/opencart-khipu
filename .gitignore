@@ -1,2 +1,4 @@
-khipu.ocmod.zip
+dist/
 .idea
+composer.phar
+.DS_Store
