@@ -178,7 +178,7 @@ class BanksApi
         foreach ($keys as $key) {
           $toSign .= "&$key=" . $encoded[$key];
         }
-        if ($_tempBody != null){
+        if (isset($_tempBody)){
           $json_body = json_encode($this->apiClient->getSerializer()->sanitizeForSerialization($_tempBody));
           $toSign .="&".$json_body;
         }
