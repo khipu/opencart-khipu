@@ -40,4 +40,4 @@ informar de errores, revisar el código fuente o ayudarnos a mejorarla puedes us
 
 ## licencia GPL
 
-Este plugin se distribuye bajo los términos de la licencia GPL versión 3. Puedes leer el archivo license.txt con los detalles de la licencia.
+Este plugin se distribuye bajo los términos de la licencia GPL versión 3. Puedes leer el archivo license.txt con los detalles de la licencia...
